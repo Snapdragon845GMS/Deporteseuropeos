@@ -1,0 +1,40 @@
+<html>
+<head>
+<script>
+    function login()
+    {
+        var user=prompt("Intro user");
+        var passwd=prompt("Intro passwd");
+        if(user=="DeportesEuropeos" && passwd=="1234")
+        {
+            alert("successful Login");
+        }
+        else if(user!="DeportesEuropeos")
+        {
+            alert("incorrect user| |Try again");
+        }
+        else if(passwd!="1234")
+        {
+            alert("password incorrect| |Try again");
+        }
+        else
+        {
+            alert("Access Denied");
+        }
+    }
+    
+</script>
+</head>
+<body>
+<p> Login de DeportesEuropeos </p>
+<button onclick=login();> Login</button>
+
+ 
+
+ 
+
+ 
+
+
+</body>
+</html>
