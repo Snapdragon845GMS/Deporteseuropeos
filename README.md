@@ -1,274 +1,249 @@
-# GitHub Action for deploying to Azure Web App
+---
+page_type: sample
+description: "Deploy Java Spring Petclinic application using GitHub Actions"
+products:
+- GitHub Actions
+- Azure App service
+languages:
+- Java
+urlFragment: https://github.com/agoncal/agoncal-application-petstore-ee7
+---
 
-With the Azure App Service Actions for GitHub, you can automate your workflow to deploy [Azure Web Apps](https://azure.microsoft.com/services/app-service/web/) or [Azure Web Apps for Containers](https://azure.microsoft.com/services/app-service/containers/) using GitHub Actions.
+# Deploying a Java Web App using GitHub actions
 
-Get started today with a [free Azure account](https://azure.com/free/open-source).
+Learn to deploy a Java Spring app to Azure App Service and set up a CI/CD workflow using GitHub Actions
 
-This repository contains GitHub Action for Azure WebApp to deploy to an Azure WebApp (Windows or Linux). The action supports deploying *\*.jar*, *\*.war*, and \**.zip* files, or a folder.
+## Overview
 
-You can also use this GitHub Action to deploy your customized image into an Azure WebApps container.
+**GitHub Actions** gives you the flexibility to build an automated software development lifecycle workflow. You can write individual tasks ("Actions") and combine them to create a custom workflow. Workflows are configurable automated processes that you can set up in your repository to build, test, package, release, or deploy any project on GitHub.
 
-For deploying container images to Kubernetes, consider using [Kubernetes deploy](https://github.com/Azure/k8s-deploy) action. This action requires that the cluster context be set earlier in the workflow by using either the [Azure/aks-set-context](https://github.com/Azure/aks-set-context/tree/releases/v1) action or the [Azure/k8s-set-context](https://github.com/Azure/k8s-set-context/tree/releases/v1) action.
+With **GitHub Actions** you can build end-to-end continuous integration (CI) and continuous deployment (CD) capabilities directly in your repository. 
 
-The definition of this GitHub Action is in [action.yml](https://github.com/Azure/webapps-deploy/blob/master/action.yml). *startup-command* is applicable only for Linux apps and not for Windows apps. Currently *startup-command* is supported only for Linux apps when SPN is provided and not when publish profile is provided.
+### Prerequisites
 
-NOTE: you must have write permissions to the repository in question. If you're using a sample repository from Microsoft, be sure to first fork the repository to your own GitHub account.
+1. You will need a **GitHub** account. If you do not have one, you can sign up for free [here](https://github.com/join)
 
-# End-to-End Sample Workflows
+1. **Microsoft Azure Account**: You will need a valid and active Azure account for this lab. If you do not have one, you can sign up for a [free trial](https://azure.microsoft.com/en-us/free/).
 
-## Dependencies on other GitHub Actions
 
-* [Checkout](https://github.com/actions/checkout) Checkout your Git repository content into GitHub Actions agent.
-* Authenticate using [Azure Web App Publish Profile](https://github.com/projectkudu/kudu/wiki/Deployment-credentials#site-credentials-aka-publish-profile-credentials) or using the [Azure Login Action](https://github.com/Azure/login). Examples of both are given later in this article.
+### Setting up the GitHub repository
 
-    The action supports using publish profile for [Azure Web Apps](https://azure.microsoft.com/services/app-service/web/) (both Windows and Linux) and [Azure Web Apps for Containers](https://azure.microsoft.com/services/app-service/containers/) (Linux only). 
-    
- **Note: As of October 2020, Linux web apps will need the app setting `WEBSITE_WEBDEPLOY_USE_SCM` set to `true` before downloading the publish profile from the portal. This requirement will be removed in the future.**
+Fork this repo and open the sample app code in VS Code to get started.
 
-    The action does not support multi-container scenario with publish profile.
+## Create an Azure App Service
 
-* To build app code in a specific language based environment, use setup actions:
-  * [Setup DotNet](https://github.com/actions/setup-dotnet) Sets up a dotnet environment by optionally downloading and caching a version of dotnet by SDK version and adding to PATH.
-  * [Setup Node](https://github.com/actions/setup-node) sets up a node environment by optionally downloading and caching a version of node - npm by version spec and add to PATH
-  * [Setup Python](https://github.com/actions/setup-python) sets up Python environment by optionally installing a version of python and adding to PATH.
-  * [Setup Java](https://github.com/actions/setup-java) sets up Java app environment optionally downloading and caching a version of java by version and adding to PATH. Downloads from [Azul's Zulu distribution](http://static.azul.com/zulu/bin/).
+Create a Wildfly based web app hosted in Azure by following the guidance in this article: https://github.com/Azure-Samples/app-service-wildfly
 
-* To build and deploy a containerized app, use [docker-login](https://github.com/Azure/docker-login) to log in to a private container registry such as [Azure Container registry](https://azure.microsoft.com/services/container-registry/).
+## Set up CI/CD workflow with GitHub Actions 
 
-Once login is done, the next set of Actions in the workflow can perform tasks such as building, tagging and pushing containers.
-  
-## Create Azure Web App and deploy using GitHub Actions
+We'll use GitHub actions to automate our deployment workflow for this web app. 
 
-Note: Workflow samples with sample application code and deployment procedure for various **runtime** environments are given at https://github.com/Azure/actions-workflow-samples/tree/master/AppService.
+1. Navigate to the sample CI/CD workflow file `workflow.yml` in your GitHub repo under `.github/workflows/` folder path
 
-For example, if You want to deploy a Java WAR based app, You can follow the link https://github.com/Azure-Samples/Java-application-petstore-ee7 in the sample workflow templates.
-
-0. Review the pre-requisites outlined in the ["Dependencies on Other Github Actions"](https://github.com/Azure/webapps-deploy#dependencies-on-other-github-actions) section above.
-1. Create a web app in Azure using app service. Follow the tutorial [Azure Web Apps Quickstart](https://docs.microsoft.com/azure/app-service/overview#next-steps).
-2. Pick a template from the following table depends on your Azure web app **runtime** and place the template to `.github/workflows/` in your project repository.
-3. Change `app-name` to your Web app name created in the first step.
-4. Commit and push your project to GitHub repository, you should see a new GitHub Action initiated in **Actions** tab.
-
-|  Runtime | Template |
-|------------|---------|
-| DotNet     | [dotnet.yml](https://github.com/Azure/actions-workflow-samples/tree/master/AppService/asp.net-core-webapp-on-azure.yml) |
-| Node       | [node.yml](https://github.com/Azure/actions-workflow-samples/tree/master/AppService/node.js-webapp-on-azure.yml) |
-| Java | [java_jar.yml](https://github.com/Azure/actions-workflow-samples/tree/master/AppService/java-jar-webapp-on-azure.yml) |
-| Java      | [java_war.yml](https://github.com/Azure/actions-workflow-samples/tree/master/AppService/java-war-webapp-on-azure.yml) |
-| Python     | [python.yml](https://github.com/Azure/actions-workflow-samples/tree/master/AppService/python-webapp-on-azure.yml) |
-| PHP        | [php.yml](https://github.com/Azure/actions-workflow-samples/blob/master/AppService/php-webapp-on-azure.yml)
-| DOCKER     | [docker.yml](https://github.com/Azure/actions-workflow-samples/blob/master/AppService/docker-webapp-container-on-azure.yml) |
-
-### Sample workflow to build and deploy a Node.js Web app to Azure using publish profile
-
+1. Modify the values of the environment variables based on your Azure app:
 ```yaml
-# File: .github/workflows/workflow.yml
-
-on: push
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    # checkout the repo
-    - name: 'Checkout Github Action' 
-      uses: actions/checkout@master
-
-    - name: Setup Node 10.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: '10.x'
-    - name: 'npm install, build, and test'
-      run: |
-        npm install
-        npm run build --if-present
-        npm run test --if-present
-
-    - name: 'Run Azure webapp deploy action using publish profile credentials'
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: node-rn
-        publish-profile: ${{ secrets.azureWebAppPublishProfile }}
-
+env:
+  AZURE_WEBAPP_NAME: your-app-name    # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  JAVA_VERSION: '1.8'                # set this to the Java version to use
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}     # set GH repo secret with the publish profile of the web app
 ```
 
-### Sample workflow to build and deploy a Node.js app to Containerized WebApp using publish profile
+1. In the portal, Overview page, click on "Get publish profile". A publish profile is a kind of deployment credential, useful when you don't own the Azure subscription. Open the downloaded settings file in VS Code and copy the contents of the file.
 
-```yaml
-on: [push]
+   ![](https://github.com/Azure/actions-workflow-samples/blob/master/assets/images/get-publish-profile.png)
 
-name: Linux_Container_Node_Workflow
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    # checkout the repo
-    - name: 'Checkout Github Action'
-      uses: actions/checkout@master
+1. We will now add the publish profile as a secret associated with this repo. On the GitHub repository, click on the "Settings" tab.
 
-    - uses: azure/docker-login@v1
-      with:
-        login-server: contoso.azurecr.io
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+   ![](https://github.com/Azure/actions-workflow-samples/blob/master/assets/images/github-settings.png)
 
-    - run: |
-        docker build . -t contoso.azurecr.io/nodejssampleapp:${{ github.sha }}
-        docker push contoso.azurecr.io/nodejssampleapp:${{ github.sha }} 
 
-    - uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'node-rnc'
-        publish-profile: ${{ secrets.azureWebAppPublishProfile }}
-        images: 'contoso.azurecr.io/nodejssampleapp:${{ github.sha }}'
+1. Go to "Secrets". Create a new secret called "AZURE_WEBAPP_PUBLISH_PROFILE" and paste the contents from the settings file.
+
+   ![](https://github.com/Azure/actions-workflow-samples/blob/master/assets/images/create-secret.png)
+
+1. Once you're done editing the workflow by configuring the required environment variables, click on "Start commit". Committing the file will trigger the workflow.
+
+1. You can go back to the Actions tab, click on your workflow, and see that the workflow is queued or being deployed. Wait for the job to complete successfully.
+
+1. Browse your app by pasting the URL of your Azure web app: https://AZURE_WEBAPP_NAME.azurewebsites.net
+
+1. Make any changes by editing the app contents and commit the changes. Browse to the **Actions** tab in GitHub to view the live logs of your Action workflow which got triggered with the push of the commit.
+
+1.  Once the workflow successfully completes execution, browse back to your website to visualise the new changes you introduced!
+
+# Application - Petstore Java EE 7
+
+* *Author* : [Antonio Goncalves](http://www.antoniogoncalves.org)
+* *Level* : Intermediate
+* *Technologies* : Java EE 7 (JPA 2.1, CDI 1.1, Bean Validation 1.1, EJB Lite 3.2, JSF 2.2, JAX-RS 2.0), Java SE 7 (because that's the minimum required by Java EE 7), Twitter Bootstrap (Bootstrap 3.x, JQuery 2.x, PrimeFaces 6.x)
+* *Application Servers* : WildFly 10, WildFly 11
+* *Summary* : A Petstore-like application using Java EE 7
+
+[Download the code from GitHub](https://github.com/agoncal/agoncal-application-petstore-ee7)
+
+## Purpose of this application
+
+Do you remember the good old Java [Petstore](http://java.sun.com/developer/releases/petstore/) ? It was a sample application created by Sun for its [Java BluePrints](http://www.oracle.com/technetwork/java/javaee/blueprints/index.html) program. The Java Petstore was designed to illustrate how J2EE (and then Java EE) could be used to develop an eCommerce web application. Yes, the point of the Petstore is to sell pets online. The Petstore had a huge momentum and we started to see plenty of Petstore-like applications flourish. The idea was to build an application with a certain technology. Let's face it, the J2EE version was far too complex using plenty of (today outdated) [design patterns](http://java.sun.com/blueprints/corej2eepatterns/). When I wrote my [Java EE 5 book](http://www.eyrolles.com/Informatique/Livre/java-ee5-9782212120387) back in 2006, I decided to write a Petstore-like application but much simpler. But again, it's out-dated today.
+
+What you have here is another Petstore-like application but using [Java EE 7](http://jcp.org/en/jsr/detail?id=342) and all its goodies (CDI, EJB Lite, REST interface). It is based on the Petstore I developed for my [Java EE 5 book](http://www.eyrolles.com/Informatique/Livre/java-ee-5-9782212126587) (sorry, it's written in French). I've updated it based on my [Java EE 6 book](http://www.amazon.com/gp/product/143022889X/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=143022889X&linkCode=as2&tag=antgonblo-20), and now I'm updating it again so it uses some new features of Java EE 7 described on my [Java EE 7 book](http://www.amazon.com/gp/product/143024626X/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=143024626X&linkCode=as2&tag=antgonblo-20). The goals of this sample is to :
+
+* use Java EE 7 and just Java EE 7 : no external framework or dependency (except web frameworks or logging APIs)
+* make it simple : no complex business algorithm, the point is to bring Java EE 7 technologies together to create an eCommerce website
+
+If you want to use a different web interface, external frameworks, add some sexy alternative JVM language... feel free to fork the code. But the goal of this EE 7 Petstore is to remain simple and to stick to Java EE 7.
+
+The only external framework used are [Arquillian](http://arquillian.org/), [Twitter Bootstrap](http://twitter.github.io/bootstrap/) and [PrimeFaces](http://www.primefaces.org/). Arquillian is used for integration testing. Using Maven profile, you can test services, injection, persistence... against different application servers. Twitter Bootstrap and PrimeFaces bring a bit of beauty to the web interface.
+
+## Compile and package
+
+Being Maven centric, you can compile and package it without tests using `mvn clean compile -Dmaven.test.skip=true`, `mvn clean package -Dmaven.test.skip=true` or `mvn clean install -Dmaven.test.skip=true`. Once you have your war file, you can deploy it.
+
+### Test with Arquillian
+
+Launching tests under [WildFly](http://www.wildfly.org/) is straight forward. You only have to launch WidlFly and execute the tests using the Maven profile :
+
+    mvn clean test -Parquillian-wildfly-remote
+
+Or if you prefer the managed mode :
+
+    mvn clean test -Parquillian-wildfly-managed
+
+## Execute the sample
+
+Once deployed go to the following URL and start buying some pets: [http://localhost:8080/applicationPetstore](http://localhost:8080/applicationPetstore).
+
+The admin [REST interface](http://localhost:8080/applicationPetstore/swagger.json) allows you to create/update/remove items in the catalog, orders or customers. You can run the following [curl](http://curl.haxx.se/) commands :
+
+* `curl -X GET http://localhost:8080/applicationPetstore/rest/categories`
+* `curl -X GET http://localhost:8080/applicationPetstore/rest/products`
+* `curl -X GET http://localhost:8080/applicationPetstore/rest/items`
+* `curl -X GET http://localhost:8080/applicationPetstore/rest/countries`
+* `curl -X GET http://localhost:8080/applicationPetstore/rest/customers`
+
+You can also get a JSON representation as follow :
+
+* `curl -X GET -H "accept: application/json" http://localhost:8080/applicationPetstore/rest/items`
+
+Check the Swagger contract on : [http://localhost:8080/applicationPetstore/swagger.json]()
+
+## Databases
+
+The `persistence.xml` defines a persistence unit called `applicationPetstorePU` that uses the default JBoss database :
+
 ```
-Webapps deploy Actions is supported for the Azure public cloud as well as Azure government clouds ('AzureUSGovernment' or 'AzureChinaCloud') and Azure Stack ('AzureStack') Hub. Before running this action, login to the respective Azure Cloud  using [Azure Login](https://github.com/Azure/login) by setting appropriate value for the `environment` parameter.
-
-#### Configure deployment credentials:
-
-For any credentials like Azure Service Principal, Publish Profile etc add them as [secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) in the GitHub repository and then use them in the workflow.
-
-The above example uses app-level credentials i.e., publish profile file for deployment. 
-
-Follow the steps to configure the secret:
-
-* **Note: As of October 2020, Linux web apps will need the app setting `WEBSITE_WEBDEPLOY_USE_SCM` set to `true` before continuing with next step of downloading the publish profile. This requirement will be removed in the future.**
-* Download the publish profile for the WebApp from the portal (Get Publish profile option)
-* While deploying to slot, download the publish profile for slot. Also specify the `slot-name` field with the name of the slot.
-* Define a new secret under your repository settings, Add secret menu
-* Paste the contents for the downloaded publish profile file into the secret's value field
-* Now in the workflow file in your branch: `.github/workflows/workflow.yml` replace the secret for the input `publish-profile:` of the deploy Azure WebApp action (Refer to the example above)
-
-### Sample workflow to build and deploy a Node.js app to Containerized WebApp using Azure service principal
-
-Use [Azure Login](https://github.com/Azure/login) with a service principal that's authorized for Web app deployment. Once login is done, the next set of Azure actions in the workflow can re-use the same session within the job.
-
-```yaml
-on: [push]
-
-name: Linux_Container_Node_Workflow
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    # checkout the repo
-    - name: 'Checkout Github Action'
-      uses: actions/checkout@master
-
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - uses: azure/docker-login@v1
-      with:
-        login-server: contoso.azurecr.io
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-
-    - run: |
-        docker build . -t contoso.azurecr.io/nodejssampleapp:${{ github.sha }}
-        docker push contoso.azurecr.io/nodejssampleapp:${{ github.sha }} 
-
-    - uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'node-rnc'
-        images: 'contoso.azurecr.io/nodejssampleapp:${{ github.sha }}'
-```
-
-#### Configure deployment credentials:
-
-The previous sample workflow depends on user-level credentials stored as a [secret](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) named `AZURE_CREDENTIALS` in your repository. The value of this secret is expected to be a JSON object that represents a service principal (an identifer for an application or process) that authenticates the workflow with Azure.
-
-To function correctly, this service principal must be assigned the [Contributor]((https://docs.microsoft.com/azure/role-based-access-control/built-in-roles#contributor)) role for the web app or the resource group that contains the web app.
-
-The following steps describe how to create the service principal, assign the role, and create a secret in your repository with the resulting credentials.
-
-1. Open the Azure Cloud Shell at [https://shell.azure.com](https://shell.azure.com). You can alternately use the [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) if you've installed it locally. (For more information on Cloud Shell, see the [Cloud Shell Overview](https://docs.microsoft.com/azure/cloud-shell/overview).)
-  
-2. Use the [az ad dp create-for-rbac](https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az_ad_sp_create_for_rbac) command to create a service principal and assign a Contributor role:
-
-    ```azurecli
-    az ad sp create-for-rbac --name "{sp-name}" --sdk-auth --role contributor \
-        --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/sites/{app-name}
-    ```
-
-    Replace the following:
-      * `{sp-name}` with a suitable name for your service principal, such as the name of the app itself. The name must be unique within your organization.
-      * `{subscription-id}` with the subscription you want to use
-      * `{resource-group}` the resource group containing the web app.
-      * `{app-name}` with the name of the web app.
-
-    This command invokes Azure Active Directory (via the `ad` part of the command) to create a service principal (via `sp`) specifically for [Role-Based Access Control (RBAC)](https://docs.microsoft.com/azure/role-based-access-control/overview) (via `create-for-rbac`).
-
-    The `--role` argument specifies the permissions to grant to the service principal at the specified `--scope`. In this case, you grant the built-in [Contributor](https://docs.microsoft.com/azure/role-based-access-control/built-in-roles#contributor) role at the scope of the web app in the specified resource group in the specified subscription.
-
-    If desired, you can omit the part of the scope starting with `/providers/...` to grant the service principal the Contributor role for the entire resource group:
-
-    ```azurecli  
-    az ad sp create-for-rbac --name "{sp-name}" --sdk-auth --role contributor \
-        --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group}
-    ```
-
-    For security purposes, however, it's always preferable to grant permissions at the most restrictive scope possible.
-
-3. When complete, the `az ad sp create-for-rbac` command displays JSON output in the following form (which is specified by the `--sdk-auth` argument):
-
-    ```json
-    {
-      "clientId": "<GUID>",
-      "clientSecret": "<GUID>",
-      "subscriptionId": "<GUID>",
-      "tenantId": "<GUID>",
-      (...)
-    }
-    ```
-
-4. In your repository, use **Add secret** to create a new secret named `AZURE_CREDENTIALS` (as shown in the example workflow), or using whatever name is in your workflow file.
-
-5. Paste the entire JSON object produced by the `az ad sp create-for-rbac` command as the secret value and save the secret.
-
-NOTE: to manage service principals created with `az ad sp create-for-rbac`, visit the [Azure portal](https://portal.azure.com), navigate to your Azure Active Directory, then select **Manage** > **App registrations** on the left-hand menu. Your service principal should appear in the list. Select a principal to navigate to its properties. You can also manage role assignments using the [az role assignment](https://docs.microsoft.com/cli/azure/role/assignment?view=azure-cli-latest) command.
-
-#### Configure web app private registry credentials
-
-This sample assumes the `node-rnc` web application has been previously configured to authenticate against the private registry. If you wish to set private registry authentication settings on the workflow, you can either use:
-
-* The command [az webapp config container](https://docs.microsoft.com/cli/azure/webapp/config/container?view=azure-cli-latest#az-webapp-config-container-set) to configure the registry url, username and password.
-
-* Setup the authentication settings using [azure/appservice-settings action](https://github.com/Azure/appservice-settings), like this for example
-
-```yaml
-    - name: Set Web App ACR authentication
-      uses: Azure/appservice-settings@v1
-      with:
-       app-name: 'node-rnc'
-       app-settings-json: |
-         [
-             {
-                 "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
-                 "value": "${{ secrets.REGISTRY_PASSWORD }}",
-                 "slotSetting": false
-             },
-             {
-                 "name": "DOCKER_REGISTRY_SERVER_URL",
-                 "value": "https://contoso.azurecr.io",
-                 "slotSetting": false
-             },
-             {
-                 "name": "DOCKER_REGISTRY_SERVER_USERNAME",
-                 "value": "${{ secrets.REGISTRY_USERNAME  }}",
-                 "slotSetting": false
-             }
-         ]
+<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
 ```
 
-# Contributing
+### H2
+ 
+By default, the application uses the in-memory H2 database. If you log into the WildFly [Admin Console](http://localhost:9990/), go to [http://localhost:9990/console/App.html#profile/datasources;name=ExampleDS]() and you will see the H2 Driver as well as the Connection URL pointing at the in-memory H2 database `jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+### Postgresql
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+If instead a H2 in-memory database you want to use PostgreSQL, you need to do the following steps.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+#### Install the PostgreSQL driver into Wildfly
+
+This [good article](http://ralph.soika.com/wildfly-install-postgresql-jdbc-driver-as-a-module/) explains you how. 
+
+1) Go to `$WILDFLY_HOME/modules/system/layers/base/` and create the folder `org/postgresql/main`
+2) Copy the Postgresql [JDBC driver jar](https://jdbc.postgresql.org/download.html) file (eg. `postgresql-42.1.4.jar`) to the new folder `$WILDFLY_HOME/modules/system/layers/base/org/postgresql/main`
+3) Create the file `$WILDFLY_HOME/modules/system/layers/base/org/postgresql/main/module.xml` with the following content:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.1" name="org.postgresql">
+    <resources>
+        <resource-root path="postgresql-42.1.4.jar"/>
+    </resources>
+    <dependencies>
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
+    </dependencies>
+</module>
+```
+
+4) Reference the module as a driver in WildFly configuration
+
+```
+WILDFLY_HOME/bin $ ./jboss-cli.sh
+You are disconnected at the moment. Type 'connect' to connect to the server or 'help' for the list of supported commands.
+[disconnected /] connect
+[standalone@localhost:9990 /] /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql, driver-class-name=org.postgresql.Driver)
+{"outcome" => "success"}
+```
+
+#### Modify the default Datasource
+
+In the Wildfly [Admin Console](http://localhost:9990) check the default datasource [ExampleDS](http://localhost:9990/console/App.html#profile/ds-finder/datasources;name=ExampleDS). As you can see, it points to an in-memory H2 database. Make the following changes so it points at Postgres:
+
+1) Attribute Tab: Change the driver to postgresql
+2) Connection Tab: Change the Connection URL to `jdbc:postgresql://localhost:5432/postgres`
+3) Security Tab: Change User name to `postgres` and no password
+
+Once Postgres is up and running, you can hit the button `Test Connection`. It should be ok.
+
+#### Startup PostgreSQL
+
+The easiest is to use the Docker file to start Postgres
+
+```
+$ docker-compose -f src/main/docker/postgresql.yml up -d
+```
+
+## Test this application on CloudBees
+
+<a href="https://grandcentral.cloudbees.com/?CB_clickstart=https://raw.github.com/cyrille-leclerc/agoncal-application-petstore-ee7/master/clickstart.json"><img src="https://d3ko533tu1ozfq.cloudfront.net/clickstart/deployInstantly.png"/></a>
+
+## Third Party Tools & Frameworks
+
+### Twitter Bootstrap
+
+When, like me, you have no web designer skills at all and your web pages look ugly, you use [Twitter Bootstrap](http://twitter.github.com/bootstrap/) ;o)
+
+## Icons
+
+I use:
+ 
+* [Font Awesome](http://fontawesome.io/)
+* [Silk Icons](http://www.famfamfam.com/lab/icons/silk/) which are in Creative Commons
+
+### Arquillian
+
+[Arquillian](http://arquillian.org/) for the integration tests.
+
+## Developpers
+
+Some people who worked on this project :
+
+* [Antoine Sabot-Durand](https://twitter.com/#!/antoine_sd)
+* [Brice Leporini](https://twitter.com/#!/blep)
+* Hervé Le Morvan
+
+## Bugs & Workaround
+
+
+## Licensing
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.
+
+<div class="footer">
+    <span class="footerTitle"><span class="uc">a</span>ntonio <span class="uc">g</span>oncalves</span>
+</div>
+
+
+## Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+
+When you submit a pull request, a CLA bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
