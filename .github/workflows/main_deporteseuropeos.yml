@@ -1,13 +1,12 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - deporteseuropeos
+name: Build and deploy WAR app to Azure Web App - deporteseuropeos
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -19,7 +18,7 @@ jobs:
     - name: Set up Java version
       uses: actions/setup-java@v1
       with:
-        java-version: '11'
+        java-version: '8'
 
     - name: Build with Maven
       run: mvn clean install
@@ -29,5 +28,5 @@ jobs:
       with:
         app-name: 'deporteseuropeos'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_e9476a100bbc415d982a27334f6ab34b }}
-        package: '${{ github.workspace }}/target/*.jar'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_a7f7757b408a488db6fdc0904d928ecb }}
+        package: '${{ github.workspace }}/target/*.war'
