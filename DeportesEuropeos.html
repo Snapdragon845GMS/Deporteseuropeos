@@ -1,54 +1,56 @@
 <html>
 <head>
-<link  href="Estilo.css" rel="stylesheet">
+<link  href="estilo.css" rel="stylesheet">
 <script>
-    function login()
-    {
-        var user=prompt("Intro user");
-        var passwd=prompt("Intro password");
-        if(user=="DeportesEuropeos" && passwd=="1234")
-        {
-            alert("successful Login");
-        }
-        else if(user!="DeportesEuropeos")
-        {
-            alert("incorrect user| |Try again");
-        }
-        else if(passwd!="1234")
-        {
-            alert("password incorrect| |Try again");
-        }
-        else
-        {
-            alert("Access Denied");
-        }
-    }
-    
+    function login() {
+	var user=
+	document.forms["LoginForm"]["fname"].value;
+	var password=
+	document.forms["LoginForm"]["fpasswd"].value;
+	if(user=="Deportes" && password=="1234"){
+		alert("You are in");
+	}
+	else{
+		alert("User and password incorrect");
+		return false;
+	}
+
+}
 </script>
 </head>
 <body>
-<p> Login de DeportesEuropeos </p>
+<div class="content">
+<p>Inicia sesión para un descuento del 10%</p>
+</div>
+<div class="content">
+<form name="LoginForm" action="main.html"
+onsubmit="return login()"
+method="post">
+Name: <input type="text" name="fname">
+<br><br>
+Password: <input type="text" name="fpasswd">
+<br><br>
 <button onclick=login();> Login</button>
-
- 
-
+</form>
+</div>
+<div class="content">
 <h1>DeportesEuropeos</h1>
 <p>Bienvenido a la mejor página de deportes.</p>
-
+</div>
  
 
 <div class="sidenav">
-  <a href="#">Log In</a>
+  <a href="#">Bienvenido</a>
 </div>
 
  
 
 <div class="content">
-  <h2>DeportesEuropeos</h2>
   <p>Encuentra los mejores accesorios al mejor precio.</p>
 </div>
-
+<div class="content">
+<img src="deporteseuropeos.jpg" alt="deportes europeos" width="797" height="438">
  
-
+</div>
 </body>
 </html>
