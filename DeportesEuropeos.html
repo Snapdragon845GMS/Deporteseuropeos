@@ -1,0 +1,54 @@
+<html>
+<head>
+<link  href="Estilo.css" rel="stylesheet">
+<script>
+    function login()
+    {
+        var user=prompt("Intro user");
+        var passwd=prompt("Intro password");
+        if(user=="DeportesEuropeos" && passwd=="1234")
+        {
+            alert("successful Login");
+        }
+        else if(user!="DeportesEuropeos")
+        {
+            alert("incorrect user| |Try again");
+        }
+        else if(passwd!="1234")
+        {
+            alert("password incorrect| |Try again");
+        }
+        else
+        {
+            alert("Access Denied");
+        }
+    }
+    
+</script>
+</head>
+<body>
+<p> Login de DeportesEuropeos </p>
+<button onclick=login();> Login</button>
+
+ 
+
+<h1>DeportesEuropeos</h1>
+<p>Bienvenido a la mejor página de deportes.</p>
+
+ 
+
+<div class="sidenav">
+  <a href="#">Log In</a>
+</div>
+
+ 
+
+<div class="content">
+  <h2>DeportesEuropeos</h2>
+  <p>Encuentra los mejores accesorios al mejor precio.</p>
+</div>
+
+ 
+
+</body>
+</html>
